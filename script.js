@@ -78,6 +78,7 @@ const animate = () => {
 animate();
 
 canvas.onmousemove = (e) => {
+    e.preventDefault();
     if (mouseDown) {
         const row = Math.floor(e.clientY / SIZE),
             col = Math.floor(e.clientX / SIZE),
@@ -99,5 +100,30 @@ canvas.onmousemove = (e) => {
         }
     }
 };
+canvas.ontouchmove = (e) => {
+    e.preventDefault();
+    if (mouseDown) {
+        const row = Math.floor(e.touches[0].clientY / SIZE),
+            col = Math.floor(e.touches[0].clientX / SIZE),
+            val = 5;
+        for (let i = -val; i <= val; i++) {
+            for (let j = -val; j <= val; j++) {
+                const r = row + i,
+                    c = col + j;
+                if (
+                    r >= 0 &&
+                    r < HEIGHT &&
+                    c >= 0 &&
+                    c < WIDTH &&
+                    Math.random() < 0.25
+                ) {
+                    grid[r][c] = 1;
+                }
+            }
+        }
+    }
+};
 canvas.onmousedown = () => (mouseDown = true);
 canvas.onmouseup = () => (mouseDown = false);
+canvas.ontouchstart = () => (mouseDown = true);
+canvas.ontouchend = () => (mouseDown = false);
