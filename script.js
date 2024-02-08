@@ -78,55 +78,43 @@ const animate = () => {
 
 animate();
 
-canvas.onmousemove = (e) => {
+const generateSand = (e) => {
     e.preventDefault();
-    if (mouseDown) {
-        const row = Math.floor(e.clientY / SIZE),
-            col = Math.floor(e.clientX / SIZE),
-            val = 5;
-        for (let i = -val; i <= val; i++) {
-            for (let j = -val; j <= val; j++) {
-                const r = row + i,
-                    c = col + j;
-                if (
-                    r >= 0 &&
-                    r < HEIGHT &&
-                    c >= 0 &&
-                    c < WIDTH &&
-                    grid[r][c] == 0 &&
-                    Math.random() < 0.25
-                ) {
-                    grid[r][c] = Math.floor(Math.random() * (90 - 40) + 40);
+    if (e.type == "mousedown" || e.type == "touchstart") {
+        mouseDown = true;
+    } else if (e.type == "mouseup" || e.type == "touchend") {
+        mouseDown = false;
+    } else {
+        if (mouseDown) {
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            const row = Math.floor(y / SIZE),
+                col = Math.floor(x / SIZE),
+                val = 5;
+
+            for (let i = -val; i <= val; i++) {
+                for (let j = -val; j <= val; j++) {
+                    const r = row + i,
+                        c = col + j;
+                    if (
+                        r >= 0 &&
+                        r < HEIGHT &&
+                        c >= 0 &&
+                        c < WIDTH &&
+                        grid[r][c] == 0 &&
+                        Math.random() < 0.25
+                    ) {
+                        grid[r][c] = Math.floor(Math.random() * (90 - 40) + 40);
+                    }
                 }
             }
         }
     }
 };
-canvas.ontouchmove = (e) => {
-    e.preventDefault();
-    if (mouseDown) {
-        const row = Math.floor(e.touches[0].clientY / SIZE),
-            col = Math.floor(e.touches[0].clientX / SIZE),
-            val = 5;
-        for (let i = -val; i <= val; i++) {
-            for (let j = -val; j <= val; j++) {
-                const r = row + i,
-                    c = col + j;
-                if (
-                    r >= 0 &&
-                    r < HEIGHT &&
-                    c >= 0 &&
-                    c < WIDTH &&
-                    grid[r][c] == 0 &&
-                    Math.random() < 0.25
-                ) {
-                    grid[r][c] = Math.floor(Math.random() * (90 - 40) + 40);
-                }
-            }
-        }
-    }
-};
-canvas.onmousedown = () => (mouseDown = true);
-canvas.onmouseup = () => (mouseDown = false);
-canvas.ontouchstart = () => (mouseDown = true);
-canvas.ontouchend = () => (mouseDown = false);
+
+canvas.addEventListener("mousemove", generateSand);
+canvas.addEventListener("mousedown", generateSand);
+canvas.addEventListener("mouseup", generateSand);
+canvas.addEventListener("touchmove", generateSand);
+canvas.addEventListener("touchstart", generateSand);
+canvas.addEventListener("touchend", generateSand);
