@@ -1,4 +1,4 @@
-const SIZE = 4;
+const SIZE = 5;
 const canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -14,7 +14,11 @@ const makeGrid = (flag = false) => {
         arr[i] = new Array(WIDTH);
         for (let j = 0; j < WIDTH; j++) {
             arr[i][j] = 0;
-            if (flag) arr[i][j] = Math.random() < 0.1 ? 1 : 0;
+            if (flag)
+                arr[i][j] =
+                    Math.random() < 0.1
+                        ? Math.floor(Math.random() * (90 - 40) + 40)
+                        : 0;
         }
     }
     return arr;
@@ -78,6 +82,33 @@ const animate = () => {
 
 animate();
 
+const sandGeneration = (e) => {
+    if (mouseDown) {
+        const x = e.touches ? e.touches[0].clientX : e.clientX;
+        const y = e.touches ? e.touches[0].clientY : e.clientY;
+        const row = Math.floor(y / SIZE),
+            col = Math.floor(x / SIZE),
+            val = 5;
+
+        for (let i = -val; i <= val; i++) {
+            for (let j = -val; j <= val; j++) {
+                const r = row + i,
+                    c = col + j;
+                if (
+                    r >= 0 &&
+                    r < HEIGHT &&
+                    c >= 0 &&
+                    c < WIDTH &&
+                    grid[r][c] == 0 &&
+                    Math.random() < 0.25
+                ) {
+                    grid[r][c] = Math.floor(Math.random() * (90 - 40) + 40);
+                }
+            }
+        }
+    }
+};
+
 const generateSand = (e) => {
     e.preventDefault();
     if (e.type == "mousedown" || e.type == "touchstart") {
@@ -85,30 +116,7 @@ const generateSand = (e) => {
     } else if (e.type == "mouseup" || e.type == "touchend") {
         mouseDown = false;
     } else {
-        if (mouseDown) {
-            const x = e.touches ? e.touches[0].clientX : e.clientX;
-            const y = e.touches ? e.touches[0].clientY : e.clientY;
-            const row = Math.floor(y / SIZE),
-                col = Math.floor(x / SIZE),
-                val = 5;
-
-            for (let i = -val; i <= val; i++) {
-                for (let j = -val; j <= val; j++) {
-                    const r = row + i,
-                        c = col + j;
-                    if (
-                        r >= 0 &&
-                        r < HEIGHT &&
-                        c >= 0 &&
-                        c < WIDTH &&
-                        grid[r][c] == 0 &&
-                        Math.random() < 0.25
-                    ) {
-                        grid[r][c] = Math.floor(Math.random() * (90 - 40) + 40);
-                    }
-                }
-            }
-        }
+        sandGeneration(e);
     }
 };
 
